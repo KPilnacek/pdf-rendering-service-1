@@ -1,0 +1,71 @@
+version: '3'
+
+volumes:
+  local_postgres_data: {}
+  local_postgres_data_backups: {}
+  local_rabbit_data: {}
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./compose/local/app/Dockerfile
+    image: pdf_rendering_service_local
+    container_name: pdf_rendering_service
+    depends_on:
+      - postgres
+      - dramatiq_worker
+      - rabbitmq
+    volumes:
+      - .:/app:z
+    env_file:
+      - ./.envs/.local/.app
+      - ./.envs/.local/.postgres
+    ports:
+      - "8000:8000"
+    command: /start
+    networks:
+      - net1
+
+  postgres:
+    build:
+      context: .
+      dockerfile: compose/local/postgres/Dockerfile
+    image: pdf_rendering_service_postgresql_local
+    container_name: postgres
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data:Z
+      - local_postgres_data_backups:/backups:z
+    env_file:
+      - ./.envs/.local/.postgres
+    networks:
+      - net1
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    volumes:
+      - local_rabbit_data:/var/lib/rabbit/data
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - net1
+
+  dramatiq_worker:
+    build:
+      context: .
+      dockerfile: ./compose/local/app/Dockerfile
+    image: pdf_rendering_service_local
+    container_name: dramatiq_worker
+    volumes:
+      - .:/app:z
+    env_file:
+      - ./.envs/.local/.app
+      - ./.envs/.local/.postgres
+    command: /dramatiq_start
+    networks:
+      - net1
+
+networks:
+  net1:
