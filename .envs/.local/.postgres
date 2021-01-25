@@ -1,7 +1,0 @@
-# PostgreSQL
-# ------------------------------------------------------------------------------
-POSTGRES_HOST=postgres
-POSTGRES_PORT=5432
-POSTGRES_DB=pdf_rendering_service
-POSTGRES_USER=CwowkwTPsMwLqHnWLAVtvlPpjZygLLjk
-POSTGRES_PASSWORD=eDQRyLOnTbCGXjs7cN9loUTzI07MpGK84ZPEMoIFJA3WPNihJEk3u8fHE8Kntptj
